@@ -14,10 +14,10 @@
     "@radix-ui/react-slot": "^1.2.4",
     "@rainbow-me/rainbowkit": "^2.2.10",
     "@rarible/ethereum-provider": "^0.13.119",
-    "@rarible/sdk": "^0.13.119",
-    "@rarible/sdk-wallet": "^0.13.119",
+    "@rarible/sdk": "^0.8.19",
+    "@rarible/sdk-wallet": "^0.13.69",
     "@rarible/tezos-sdk": "^0.1.7",
-    "@rarible/web3-ethereum": "^0.13.119",
+    "@rarible/web3-ethereum": "^0.13.68",
     "@react-three/drei": "^9.56.15",
     "@react-three/fiber": "^8.13.7",
     "@reown/appkit": "^1.8.15",
@@ -55,7 +55,7 @@
   "devDependencies": {
     "@netlify/next": "^1.4.9",
     "autoprefixer": "^10.4.16",
-    "eslint-config-next": "14.2.3",
+    "eslint-config-next": "^16.1.1",
     "postcss": "^8.4.31",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
