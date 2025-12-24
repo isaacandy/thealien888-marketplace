@@ -1,0 +1,13 @@
+/* Starfield background canvas styles for TheAlien888 marketplace */
+
+.starfield-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, #10131a 0%, #050816 100%);
+  transition: background 0.5s;
+}
