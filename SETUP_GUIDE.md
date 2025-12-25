@@ -5,7 +5,7 @@
 1. In your project root (same folder as `package.json`), create a new file named `.env.local`
 2. Add this line (no quotes, no spaces around the `=`):
    ```
-   RARIBLE_API_KEY=afdf41ce-b697-447c-b5bf-f9340315e7f0
+  RARIBLE_API_KEY=[REDACTED]
    ```
 3. Save the file
 

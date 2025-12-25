@@ -38,11 +38,11 @@
 
 ### Environment Variables Required on Netlify:
 1. **RARIBLE_API_KEY** - For Rarible Protocol API access
-   - Value: `afdf41ce-b697-447c-b5bf-f9340315e7f0`
+   - Value: `[REDACTED]`
    - Type: Server-side only
 
 2. **NEXT_PUBLIC_RARIBLE_API_KEY** - For client-side API calls
-   - Value: `afdf41ce-b697-447c-b5bf-f9340315e7f0`
+   - Value: `[REDACTED]`
    - Type: Public (visible to client)
 
 3. **Optional - For Future Features:**
@@ -71,8 +71,8 @@ In Netlify Dashboard:
 1. Go to **Site Settings** → **Environment Variables**
 2. Add the following variables:
    ```
-   RARIBLE_API_KEY = afdf41ce-b697-447c-b5bf-f9340315e7f0
-   NEXT_PUBLIC_RARIBLE_API_KEY = afdf41ce-b697-447c-b5bf-f9340315e7f0
+   RARIBLE_API_KEY = [REDACTED]
+   NEXT_PUBLIC_RARIBLE_API_KEY = [REDACTED]
    NPM_FLAGS = --legacy-peer-deps
    NODE_VERSION = 22
    ```

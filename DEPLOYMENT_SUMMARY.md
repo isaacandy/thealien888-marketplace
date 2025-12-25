@@ -76,8 +76,8 @@ The TheAlien.888 NFT Marketplace build has been successfully completed and is **
 ### Environment Configuration
 ```env
 # API Keys
-RARIBLE_API_KEY=afdf41ce-b697-447c-b5bf-f9340315e7f0
-NEXT_PUBLIC_RARIBLE_API_KEY=afdf41ce-b697-447c-b5bf-f9340315e7f0
+RARIBLE_API_KEY=[REDACTED]
+NEXT_PUBLIC_RARIBLE_API_KEY=[REDACTED]
 
 # Build Settings
 NODE_VERSION=22

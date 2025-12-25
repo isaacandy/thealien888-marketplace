@@ -71,10 +71,10 @@ URL: https://app.netlify.com/
 3. **Add the two required variables:**
    ```
    Name: RARIBLE_API_KEY
-   Value: afdf41ce-b697-447c-b5bf-f9340315e7f0
+   Value: [REDACTED]
    
    Name: NEXT_PUBLIC_RARIBLE_API_KEY
-   Value: afdf41ce-b697-447c-b5bf-f9340315e7f0
+   Value: [REDACTED]
    ```
 
 4. **Save and trigger redeploy**

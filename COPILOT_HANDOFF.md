@@ -103,7 +103,7 @@ TheAlien888-Site.-Front-end-module/
 
 ### **Environment Variables:**
 ```bash
-RARIBLE_API_KEY=afdf41ce-b697-447c-b5bf-f9340315e7f0
+RARIBLE_API_KEY=[REDACTED]
 # Must restart dev server after adding .env.local
 ```
 

@@ -69,8 +69,8 @@
    - Go to: Site Settings → Environment Variables
    - Add:
      ```
-     RARIBLE_API_KEY=afdf41ce-b697-447c-b5bf-f9340315e7f0
-     NEXT_PUBLIC_RARIBLE_API_KEY=afdf41ce-b697-447c-b5bf-f9340315e7f0
+   RARIBLE_API_KEY=[REDACTED]
+   NEXT_PUBLIC_RARIBLE_API_KEY=[REDACTED]
      NPM_FLAGS=--legacy-peer-deps
      NODE_VERSION=22
      ```
