@@ -50,7 +50,11 @@
   },
   "overrides": {
     "@aptos-labs/ts-sdk": "5.2.0",
-    "@wagmi/core": "2.22.1"
+    "@wagmi/core": "2.22.1",
+    "inflight": "npm:@alexbinary/inflight@^2.1.0",
+    "glob": "^10.3.10",
+    "uuid": "^10.0.0",
+    "three-mesh-bvh": "^0.8.0"
   },
   "engines": {
     "node": ">=20.9.0"
