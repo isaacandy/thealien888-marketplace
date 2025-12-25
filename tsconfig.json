@@ -37,6 +37,8 @@
     "**/*.mts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "lib/RaribleService-Prof-Surface-Pro.ts",
+    "__copilot_backup__"
   ]
 }

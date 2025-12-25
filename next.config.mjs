@@ -1,9 +1,17 @@
 
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 // Next.js 16+ ESM config
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     // output: 'export', // Removed for Netlify SSR/serverless compatibility
-    turbopack: {},
+    turbopack: {
+        // Explicitly set root so Turbopack resolves the Next package from the workspace root
+        root: path.resolve(__dirname),
+    },
     // Turbopack is enabled via CLI, not config. Remove this key.
     // Custom headers (still supported in Next.js 16)
     async headers() {

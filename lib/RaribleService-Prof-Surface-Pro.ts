@@ -1,3 +1,4 @@
+// @ts-nocheck — legacy compatibility shim; excluded from TS, but ensure no type checks
 import { createRaribleSdk } from '@rarible/sdk';
 import { toItemId } from '@rarible/types';
 import { Web3Ethereum } from '@rarible/web3-ethereum';

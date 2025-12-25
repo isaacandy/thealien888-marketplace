@@ -1,0 +1,16 @@
+{
+  "account": {
+    "Name": "Dr. Isaac G Andy, Ph.D",
+    "Email": "isaac@iznd.xyz",
+    "Teams": [
+      "Dr. Isaac G Andy, Ph.D's team"
+    ]
+  },
+  "siteData": {
+    "site-name": "thealien888-marketplace",
+    "config-path": "C:\\Users\\DrIsaacAndyPhD\\OneDrive - iZND Services\\workspace\\thealien888-marketplace\\netlify.toml",
+    "admin-url": "https://app.netlify.com/projects/thealien888-marketplace",
+    "site-url": "https://web3.thealien888.iznd.xyz",
+    "site-id": "d2cedaab-0829-4e06-8e20-d6d3108689ef"
+  }
+}
