@@ -10,19 +10,22 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@alloc/quick-lru": "5.2.0",
     "@radix-ui/react-label": "^2.1.8",
     "@radix-ui/react-slot": "^1.2.4",
     "@rainbow-me/rainbowkit": "^2.2.10",
+    "@rarible/api-client": "1.115.0",
     "@rarible/ethereum-provider": "^0.13.119",
-    "@rarible/sdk": "0.8.19",
-    "@rarible/sdk-wallet": "0.13.69",
-    "@rarible/tezos-sdk": "^0.1.7",
+    "@rarible/sdk": "^0.8.19",
+    "@rarible/sdk-wallet": "^0.13.69",
+    "@rarible/tezos-sdk": "0.1.7",
     "@rarible/web3-ethereum": "^0.13.68",
     "@react-three/drei": "^9.56.15",
     "@react-three/fiber": "^8.13.7",
     "@reown/appkit": "^1.8.15",
     "@reown/appkit-adapter-wagmi": "^1.8.15",
     "@tanstack/react-query": "^5.90.12",
+    "@wagmi/connectors": "^2.7.0",
     "@walletconnect/ethereum-provider": "^2.21.10",
     "build": "^0.1.4",
     "class-variance-authority": "^0.7.1",
@@ -43,8 +46,7 @@
     "tailwind-merge": "^3.4.0",
     "three": "^0.182.0",
     "viem": "^2.43.2",
-    "wagmi": "^2.19.5",
-    "@rarible/api-client": "1.115.0"
+    "wagmi": "^2.19.5"
   },
   "overrides": {
     "@aptos-labs/ts-sdk": "5.2.0",

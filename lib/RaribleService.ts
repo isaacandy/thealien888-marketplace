@@ -22,12 +22,18 @@ function getRaribleApiKey(): string {
  * Creates the headers required for Rarible API requests.
  * @internal
  */
-function _createRaribleHeaders(): HeadersInit {
+export function _createRaribleHeaders(): HeadersInit {
   const headers: HeadersInit = {
     'Accept': 'application/json',
-    // Dynamically set Referer for development to avoid API restrictions
-    ...(typeof window !== 'undefined' && window.location.hostname === 'localhost' ? { 'Referer': 'http://localhost:3000' } : {}),
   };
+  
+  // Try setting referer to localhost for server-side requests
+  // This may be required by Rarible API key configuration
+  if (typeof window === 'undefined') {
+    // Server-side: set referer to localhost
+    headers['Referer'] = 'http://localhost:3000';
+  }
+  
   const apiKey = getRaribleApiKey();
   if (apiKey) {
     headers['X-API-KEY'] = apiKey;
@@ -87,9 +93,19 @@ export async function fetchAlien888Items(
   }
 
   const data = await response.json();
-
+  // Filter to only minted NFTs from the correct collection
+  const filteredItems = (data.items || []).filter(
+    (item: any) => {
+      // Accept both string and object for collection/contract
+      const contract = (typeof item.contract === 'string') ? item.contract.replace(/^ethereum:/i, '').toLowerCase() : '';
+      const isCorrectCollection = contract === THE_ALIEN_888_COLLECTION_ID.replace(/^ETHEREUM:/i, '').toLowerCase();
+      // Only minted NFTs (supply > 0)
+      const isMinted = item.supply && Number(item.supply) > 0;
+      return isCorrectCollection && isMinted;
+    }
+  );
   return {
-    items: data.items,
+    items: filteredItems,
     continuation: data.continuation,
   };
 }
@@ -147,7 +163,18 @@ async function fetchItemsByOwner(
   }
 
   const data = await response.json();
-  return { items: data.items, continuation: data.continuation };
+  // Filter to only minted NFTs from the correct collection
+  const filteredItems = (data.items || []).filter(
+    (item: any) => {
+      const contract = (typeof item.contract === 'string') ? item.contract.replace(/^ethereum:/i, '').toLowerCase() : '';
+      const isCorrectCollection = collectionId
+        ? contract === collectionId.replace(/^ETHEREUM:/i, '').toLowerCase()
+        : contract === THE_ALIEN_888_COLLECTION_ID.replace(/^ETHEREUM:/i, '').toLowerCase();
+      const isMinted = item.supply && Number(item.supply) > 0;
+      return isCorrectCollection && isMinted;
+    }
+  );
+  return { items: filteredItems, continuation: data.continuation };
 }
 
 export async function fetchAlien888ItemsByOwner(

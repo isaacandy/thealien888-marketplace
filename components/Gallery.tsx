@@ -281,16 +281,24 @@ const Gallery: React.FC = () => {
       <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {nftsToShow.map((item: RaribleItem) => {
           const imageUrl = resolveItemImageUrl(item);
-          const isUnminted = !item.meta?.name;
-          // Always show TheAlien.888 and verified check for official collection
+          // Only minted NFTs should be shown, but double-check here
+          const isMinted = item.supply && Number(item.supply) > 0;
+          if (!isMinted) return null;
+
+          // Show actual collection name and verified status
           const THE_ALIEN_888_CONTRACT = "0x295a6a847e3715f224826aa88156f356ac523eef";
-          const isAlien888 = item.contract?.replace(/^ethereum:/i, '').toLowerCase() === THE_ALIEN_888_CONTRACT;
-          const collectionName = isAlien888
-            ? "TheAlien.888"
-            : (typeof item.collection === "object" && "name" in item.collection && (item.collection as { name?: string }).name)
-            ? (item.collection as { name?: string }).name
-            : "Unknown";
-          const showVerified = isAlien888 || (typeof item.collection === "object" && "verified" in item.collection && (item.collection as { verified?: boolean }).verified);
+          const contractAddr = item.contract?.replace(/^ethereum:/i, '').toLowerCase();
+          const isAlien888 = contractAddr === THE_ALIEN_888_CONTRACT;
+          let collectionName = "Unknown";
+          let showVerified = false;
+          if (typeof item.collection === "object") {
+            if ("name" in item.collection && item.collection.name) collectionName = item.collection.name;
+            if ("verified" in item.collection && item.collection.verified) showVerified = true;
+          }
+          if (isAlien888) {
+            collectionName = "TheAlien.888";
+            showVerified = true;
+          }
           const itemUrl = `/token/${item.contract.replace('ETHEREUM:', '')}/${item.tokenId}`;
 
           return (
@@ -347,21 +355,6 @@ const Gallery: React.FC = () => {
                         #{item.tokenId}
                       </span>
                     </div>
-                    {/* Minting teaser for unminted NFTs */}
-                    {isUnminted && (
-                      <div className="mt-2 rounded-lg bg-fuchsia-500/10 p-2 text-xs text-fuchsia-200">
-                        <div className="mb-1 font-semibold">Why Mint?</div>
-                        <div className="mb-2">Mint your own unique Alien.888 NFT and join the collection! Minting is open for new members and collectors.</div>
-                        <a
-                          href="https://www.crossmint.com/collections/thealien888"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-block rounded bg-fuchsia-500 px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-black shadow-[0_0_15px_rgba(217,70,239,0.4)] transition hover:bg-fuchsia-400 hover:text-white"
-                        >
-                          Mint with Card (Crossmint)
-                        </a>
-                      </div>
-                    )}
                     {/* Action Buttons - Enhanced for My Collection */}
                      {isMyCollection ? (
                        <>
