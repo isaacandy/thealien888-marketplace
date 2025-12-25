@@ -291,9 +291,10 @@ const Gallery: React.FC = () => {
           const isAlien888 = contractAddr === THE_ALIEN_888_CONTRACT;
           let collectionName = "Unknown";
           let showVerified = false;
-          if (typeof item.collection === "object") {
-            if ("name" in item.collection && item.collection.name) collectionName = item.collection.name;
-            if ("verified" in item.collection && item.collection.verified) showVerified = true;
+          if (typeof item.collection === "object" && item.collection !== null) {
+            const collection = item.collection as { name?: string; verified?: boolean };
+            if (collection.name) collectionName = collection.name;
+            if (collection.verified) showVerified = collection.verified;
           }
           if (isAlien888) {
             collectionName = "TheAlien.888";
