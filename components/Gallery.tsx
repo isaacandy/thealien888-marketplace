@@ -89,14 +89,15 @@ const Gallery: React.FC = () => {
   const connected = isConnected; // Use only standard wagmi hooks and RaribleService for wallet and NFT actions
   const router = useRouter();
 
-  const handleViewDetails = (item: any) => {
-    // item.id is in the format 'ETHEREUM:0x...:tokenId'
-    const parts = item.id.split(':');
-    if (parts.length === 3) {
-      const contract = parts[1];
-      const tokenId = parts[2];
-      router.push(`/token/${contract}/${tokenId}`);
-    }
+  // Modal overlay state for NFT details
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const handleViewDetails = (item: RaribleItem) => {
+    setSelectedItem(item);
+    setShowDetailModal(true);
+  };
+  const handleCloseDetailModal = () => {
+    setShowDetailModal(false);
+    setSelectedItem(null);
   };
 
   const [viewMode, setViewMode] = useState<ViewMode>("all-collection");
@@ -203,6 +204,98 @@ const Gallery: React.FC = () => {
 
   return (
     <div className="mt-10">
+      {/* NFT Detail Modal Overlay */}
+      {showDetailModal && selectedItem && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+          <div className="relative bg-gray-900 rounded-2xl shadow-2xl p-8 max-w-lg w-full">
+            <button
+              className="absolute top-3 right-3 text-gray-400 hover:text-white text-2xl font-bold"
+              onClick={handleCloseDetailModal}
+              aria-label="Close"
+            >
+              ×
+            </button>
+            <div className="flex flex-col items-center">
+              {resolveItemImageUrl(selectedItem) ? (
+                <Image
+                  src={String(resolveItemImageUrl(selectedItem) || "")}
+                  alt={selectedItem.meta?.name ?? selectedItem.id}
+                  width={320}
+                  height={320}
+                  className="rounded-xl mb-4 object-cover"
+                  unoptimized
+                />
+              ) : (
+                <div className="w-80 h-80 flex items-center justify-center bg-emerald-950/40 text-xs text-emerald-200/60 mb-4 rounded-xl">
+                  No preview
+                </div>
+              )}
+              <h2 className="text-2xl font-bold text-emerald-100 mb-2 text-center">
+                {selectedItem.meta?.name ?? `Token #${selectedItem.tokenId}`}
+              </h2>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="font-mono text-emerald-300 text-xs">#{selectedItem.tokenId}</span>
+                {(() => {
+                  const contractAddr = selectedItem.contract?.replace(/^ethereum:/i, '').toLowerCase();
+                  if (contractAddr === "0x295a6a847e3715f224826aa88156f356ac523eef") {
+                    return (
+                      <span className="flex items-center gap-1 bg-gray-800 px-2 py-1 rounded-full text-emerald-100 text-xs font-mono">
+                        TheAlien.888
+                        <svg className="h-3 w-3 text-emerald-400 ml-1" viewBox="0 0 24 24" fill="currentColor" aria-label="Verified collection"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" /></svg>
+                      </span>
+                    );
+                  }
+                  return null;
+                })()}
+              </div>
+              {selectedItem.meta?.description && (
+                <p className="text-emerald-200 text-sm mb-4 text-center whitespace-pre-line">{selectedItem.meta.description}</p>
+              )}
+              <div className="flex flex-col gap-2 w-full mt-2">
+                <a
+                  href={`https://rarible.com/token/${selectedItem.contract.replace('ETHEREUM:', '')}:${selectedItem.tokenId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full rounded-lg bg-fuchsia-700/80 px-4 py-2 text-center text-sm font-semibold text-white shadow-[0_0_15px_rgba(232,121,249,0.5)] hover:bg-fuchsia-600 transition"
+                >
+                  View on Rarible (Verified)
+                </a>
+                <button
+                  onClick={() => {
+                    setAction('bid');
+                    setShowDetailModal(false);
+                  }}
+                  className="w-full rounded-lg bg-emerald-700/80 px-4 py-2 text-center text-sm font-semibold text-white shadow-[0_0_15px_rgba(52,211,153,0.5)] hover:bg-emerald-600 transition"
+                >
+                  Buy / Make Offer
+                </button>
+                <button
+                  onClick={() => {
+                    setAction('sell');
+                    setShowDetailModal(false);
+                  }}
+                  className="w-full rounded-lg bg-gray-800 px-4 py-2 text-center text-sm font-semibold text-emerald-100 hover:bg-gray-700 transition"
+                  disabled={!isMyCollection}
+                  title={isMyCollection ? '' : 'Only your NFTs can be listed for sale'}
+                >
+                  List for Sale
+                </button>
+                <a
+                  href={`/token/${selectedItem.contract.replace('ETHEREUM:', '')}/${selectedItem.tokenId}`}
+                  className="w-full rounded-lg bg-gray-900 px-4 py-2 text-center text-xs font-semibold text-emerald-200 hover:bg-gray-800 transition"
+                  onClick={handleCloseDetailModal}
+                >
+                  Full Details Page
+                </a>
+              </div>
+              <div className="mt-4 w-full">
+                <RaribleActivity contract={selectedItem.contract.replace(/^ethereum:/i, "")} tokenId={selectedItem.tokenId} />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Trade Modal for Sell/Bid/Offer */}
       {selectedItem && action && (
         <TradeModal
           action={action}
@@ -300,123 +393,120 @@ const Gallery: React.FC = () => {
             collectionName = "TheAlien.888";
             showVerified = true;
           }
-          const itemUrl = `/token/${item.contract.replace('ETHEREUM:', '')}/${item.tokenId}`;
-
+          // Instead of Link, use a clickable card to open modal
           return (
-            <Link href={itemUrl} key={item.id}>
-               <article
-                 className="group relative overflow-hidden rounded-2xl bg-gray-900/50"
-              >
-                  <div className="flex h-full flex-col overflow-hidden rounded-2xl bg-black/90">
-                  <div className="relative aspect-square overflow-hidden">
-                    {imageUrl ? (
-                      <Image
-                        src={String(imageUrl || "")}
-                        alt={item.meta?.name ?? item.id}
-                        width={256}
-                        height={256}
-                        className="h-full w-full transform object-cover transition duration-500 group-hover:scale-110 group-hover:brightness-110"
-                        loading="lazy"
-                        unoptimized
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-emerald-950/40 text-xs text-emerald-200/60">
-                        No preview
-                      </div>
+            <div
+              key={item.id}
+              className="group relative overflow-hidden rounded-2xl bg-gray-900/50 cursor-pointer"
+              onClick={() => handleViewDetails(item)}
+              tabIndex={0}
+              aria-label={`View details for ${item.meta?.name ?? `Token #${item.tokenId}`}`}
+              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') handleViewDetails(item); }}
+              role="button"
+            >
+              <div className="flex h-full flex-col overflow-hidden rounded-2xl bg-black/90">
+                <div className="relative aspect-square overflow-hidden">
+                  {imageUrl ? (
+                    <Image
+                      src={String(imageUrl || "")}
+                      alt={item.meta?.name ?? item.id}
+                      width={256}
+                      height={256}
+                      className="h-full w-full transform object-cover transition duration-500 group-hover:scale-110 group-hover:brightness-110"
+                      loading="lazy"
+                      unoptimized
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-emerald-950/40 text-xs text-emerald-200/60">
+                      No preview
+                    </div>
+                  )}
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-emerald-500/10 opacity-70 mix-blend-screen" />
+                </div>
+                <div className="flex flex-1 flex-col justify-between space-y-3 p-3">
+                  <div>
+                    <h3 className="truncate text-base font-semibold text-emerald-100">
+                      {item.meta?.name ?? `Token #${item.tokenId}`}
+                    </h3>
+                    {item.meta?.description && (
+                      <p className="mt-1 line-clamp-2 text-xs text-emerald-100">
+                        {item.meta.description}
+                      </p>
                     )}
-                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-emerald-500/10 opacity-70 mix-blend-screen" />
                   </div>
-                  <div className="flex flex-1 flex-col justify-between space-y-3 p-3">
-                    <div>
-                      <h3 className="truncate text-base font-semibold text-emerald-100">
-                        {item.meta?.name ?? `Token #${item.tokenId}`}
-                      </h3>
-                      {item.meta?.description && (
-                        <p className="mt-1 line-clamp-2 text-xs text-emerald-100">
-                          {item.meta.description}
-                        </p>
-                      )}
-                    </div>
-                    <div className="flex items-center justify-between text-[12px] text-emerald-300/80">
-                      <span className="flex items-center gap-1 rounded-full bg-gray-800 px-2 py-1 font-mono uppercase tracking-wide text-emerald-100">
-                        {collectionName}
-                        {showVerified && (
-                          <svg
-                            className="h-3 w-3 text-emerald-400 ml-1"
-                            viewBox="0 0 24 24"
-                            fill="currentColor"
-                            aria-label="Verified collection"
-                            
-                          >
-                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
-                          </svg>
-                        )}
-                      </span>
-                      <span className="font-mono text-emerald-100">
-                        #{item.tokenId}
-                      </span>
-                    </div>
-                    {/* Action Buttons - Enhanced for My Collection */}
-                     {isMyCollection ? (
-                       <>
-                         <div className="mt-2 space-y-2">
-                           <div className="flex gap-2">
-                             <button
-                               onClick={(e) => {
-                                 e.preventDefault();
-                                 setSelectedItem(item);
-                                 setAction("sell");
-                               }}
-                               className="flex-1 rounded-lg bg-gray-800 px-3 py-2 text-center text-xs font-semibold uppercase tracking-wide text-emerald-100 transition hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-black/60"
-                             >
-                               💰 List for Sale
-                             </button>
-                             <Link
-                               href={`/token/${item.contract.replace('ETHEREUM:', '')}/${item.tokenId}`}
-                               passHref
-                               legacyBehavior
-                             >
-                               <a
-                                 className="flex-1 rounded-lg bg-emerald-900 px-3 py-2 text-center text-xs font-semibold uppercase tracking-wide text-emerald-200 transition hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-black/60 no-underline"
-                                 onClick={e => e.stopPropagation()}
-                               >
-                                 👁️ View
-                               </a>
-                             </Link>
-                           </div>
-                           <button
-                             onClick={(e) => {
-                               e.preventDefault();
-                               setSelectedItem(item);
-                               setAction("offer");
-                             }}
-                             className="block w-full rounded-lg bg-gray-800/50 px-3 py-1.5 text-center text-xs font-medium uppercase tracking-wide text-emerald-100 transition hover:bg-gray-700/50 hover:text-white focus:outline-none focus:ring-2 focus:ring-black/60"
-                           >
-                             🤝 Make Offer
-                           </button>
-                         </div>
-                         {/* Rarible Activity Feed & Listing Price */}
-                         <RaribleActivity contract={item.contract.replace(/^ethereum:/i, "")} tokenId={item.tokenId} />
-                       </>
-                     ) : (
-                      <div className="mt-2 flex items-center justify-between text-[12px]">
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setSelectedItem(item);
-                            setAction("bid");
-                          }}
-                          className="rounded-full bg-amber-900/40 px-2 py-1 font-mono uppercase tracking-wide text-amber-400 transition hover:bg-amber-800/40 focus:outline-none focus:ring-2 focus:ring-black/60"
+                  <div className="flex items-center justify-between text-[12px] text-emerald-300/80">
+                    <span className="flex items-center gap-1 rounded-full bg-gray-800 px-2 py-1 font-mono uppercase tracking-wide text-emerald-100">
+                      {collectionName}
+                      {showVerified && (
+                        <svg
+                          className="h-3 w-3 text-emerald-400 ml-1"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          aria-label="Verified collection"
                         >
-                          Buy/Offer
+                          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
+                        </svg>
+                      )}
+                    </span>
+                    <span className="font-mono text-emerald-100">
+                      #{item.tokenId}
+                    </span>
+                  </div>
+                  {/* Action Buttons - Enhanced for My Collection */}
+                  {isMyCollection ? (
+                    <>
+                      <div className="mt-2 space-y-2">
+                        <div className="flex gap-2">
+                          <button
+                            onClick={e => {
+                              e.stopPropagation();
+                              setSelectedItem(item);
+                              setAction("sell");
+                            }}
+                            className="flex-1 rounded-lg bg-gray-800 px-3 py-2 text-center text-xs font-semibold uppercase tracking-wide text-emerald-100 transition hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-black/60"
+                          >
+                            💰 List for Sale
+                          </button>
+                          <a
+                            href={`/token/${item.contract.replace('ETHEREUM:', '')}/${item.tokenId}`}
+                            className="flex-1 rounded-lg bg-emerald-900 px-3 py-2 text-center text-xs font-semibold uppercase tracking-wide text-emerald-200 transition hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-black/60 no-underline"
+                            onClick={e => e.stopPropagation()}
+                          >
+                            👁️ View
+                          </a>
+                        </div>
+                        <button
+                          onClick={e => {
+                            e.stopPropagation();
+                            setSelectedItem(item);
+                            setAction("offer");
+                          }}
+                          className="block w-full rounded-lg bg-gray-800/50 px-3 py-1.5 text-center text-xs font-medium uppercase tracking-wide text-emerald-100 transition hover:bg-gray-700/50 hover:text-white focus:outline-none focus:ring-2 focus:ring-black/60"
+                        >
+                          🤝 Make Offer
                         </button>
                       </div>
-                    )}
-                  </div>
-                  <div className="pointer-events-none absolute inset-px rounded-2xl opacity-0 transition" />
+                      {/* Rarible Activity Feed & Listing Price */}
+                      <RaribleActivity contract={item.contract.replace(/^ethereum:/i, "")} tokenId={item.tokenId} />
+                    </>
+                  ) : (
+                    <div className="mt-2 flex items-center justify-between text-[12px]">
+                      <button
+                        onClick={e => {
+                          e.stopPropagation();
+                          setSelectedItem(item);
+                          setAction("bid");
+                        }}
+                        className="rounded-full bg-amber-900/40 px-2 py-1 font-mono uppercase tracking-wide text-amber-400 transition hover:bg-amber-800/40 focus:outline-none focus:ring-2 focus:ring-black/60"
+                      >
+                        Buy/Offer
+                      </button>
+                    </div>
+                  )}
                 </div>
-              </article>
-            </Link>
+                <div className="pointer-events-none absolute inset-px rounded-2xl opacity-0 transition" />
+              </div>
+            </div>
           );
         })}
       </div>
