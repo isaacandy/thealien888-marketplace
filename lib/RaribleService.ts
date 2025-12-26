@@ -9,13 +9,12 @@ import { publicActions } from 'viem';
 
 const RARIBLE_API_BASE_URL = 'https://api.rarible.com/v0.1';
 function getRaribleApiKey(): string {
-  // This function safely accesses environment variables for both server and client.
-  // On the server, it can access both RARIBLE_API_KEY and NEXT_PUBLIC_RARIBLE_API_KEY.
-  if (typeof process !== 'undefined' && process.env) {
-    return process.env.RARIBLE_API_KEY || process.env.NEXT_PUBLIC_RARIBLE_API_KEY || '';
+  // Only allow RARIBLE_API_KEY to be used on the server (never in client bundle)
+  if (typeof window === 'undefined' && typeof process !== 'undefined' && process.env) {
+    return process.env.RARIBLE_API_KEY || '';
   }
-  // On the client, it can only access variables prefixed with NEXT_PUBLIC_.
-  return process.env.NEXT_PUBLIC_RARIBLE_API_KEY || '';
+  // On the client, only allow NEXT_PUBLIC_RARIBLE_API_KEY (if ever needed)
+  return '';
 }
 
 /**
