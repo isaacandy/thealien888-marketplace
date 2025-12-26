@@ -209,18 +209,22 @@ function _initializeRaribleSdk(walletClient: WalletClient) {
     from: walletClient.account.address,
   });
   const ethWallet = new EthereumWallet(web3);
-  return createRaribleSdk(ethWallet, 'prod', { apiKey: getRaribleApiKey() });
+  // Patch: set blockchain property for Rarible SDK type compatibility
+  (ethWallet as any).blockchain = "ETHEREUM";
+  return createRaribleSdk(ethWallet as any, 'prod', { apiClientParams: { apiKey: getRaribleApiKey() } });
 }
 
 // Use only official Rarible SDK as a library, not as a global or legacy script
 export async function createSellOrder(walletClient: WalletClient, itemId: string, price: number) {
   const sdk = _initializeRaribleSdk(walletClient);
-  return await sdk.order.sell({ itemId: toItemId(itemId), price, currency: { '@type': 'ETH' } });
+  const action = await sdk.order.sell({ itemId: toItemId(itemId) });
+  return await action.submit({ amount: 1, price, currency: { '@type': 'ETH' } });
 }
 
 export async function createBidOrder(walletClient: WalletClient, itemId: string, price: number) {
   const sdk = _initializeRaribleSdk(walletClient);
-  return await sdk.order.bid({ itemId: toItemId(itemId), price, currency: { '@type': 'ETH' } });
+  const action = await sdk.order.bid({ itemId: toItemId(itemId) });
+  return await action.submit({ amount: 1, price, currency: { '@type': 'ETH' } });
 }
 
 export async function fetchItemById(itemId: string): Promise<RaribleItem> {
