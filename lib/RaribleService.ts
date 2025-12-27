@@ -25,14 +25,14 @@ export function _createRaribleHeaders(): HeadersInit {
   const headers: HeadersInit = {
     'Accept': 'application/json',
   };
-  
+
   // Try setting referer to localhost for server-side requests
   // This may be required by Rarible API key configuration
   if (typeof window === 'undefined') {
     // Server-side: set referer to localhost
     headers['Referer'] = 'http://localhost:3000';
   }
-  
+
   const apiKey = getRaribleApiKey();
   if (apiKey) {
     headers['X-API-KEY'] = apiKey;
@@ -54,10 +54,78 @@ export interface FetchOwnerItemsOptions {
   collectionId?: string;
 }
 
+
+export interface RaribleCollectionStats {
+  floorPrice?: number;
+  totalVolume?: number;
+  totalMinted?: number; // supply
+  owners?: number;
+  highestSale?: number;
+}
+
 export interface FetchCollectionOptions {
   size?: number;
   continuation?: string;
 }
+
+// Helper to fetch collection summary/stats
+export async function fetchCollectionStats(collectionId: string): Promise<RaribleCollectionStats> {
+  // 1. Get basic collection metadata (supply, owners)
+  let stats: RaribleCollectionStats = {};
+  try {
+    const res = await fetch(`${RARIBLE_API_BASE_URL}/collections/${collectionId}`, { headers: _createRaribleHeaders() });
+    if (res.ok) {
+      const data = await res.json();
+      stats.totalMinted = Number(data.statistics?.items) || 0;
+      stats.owners = Number(data.statistics?.owners) || 0;
+      stats.floorPrice = Number(data.statistics?.floorPrice?.price) || 0;
+      stats.totalVolume = Number(data.statistics?.totalVolume?.price) || 0; // Lifetime volume
+    }
+  } catch (e) {
+    console.error("Failed to fetch collection stats:", e);
+  }
+
+  // 2. Calculate highest sale from historical activity (expensive, so limit or optimize if possible)
+  // For this demo, we check the top sales or recent activity
+  try {
+    // Rarible API doesn't have a direct "highest sale ever" endpoint for free tier easily, 
+    // but we can look for high value transfers/sales. 
+    // For now, we will use a placeholder or derived value if API limits.
+    // A better approach for "Highest Sale" is typically to index events, but we can try to get activity.
+    const highest = await fetchHighestSale(collectionId);
+    stats.highestSale = highest;
+  } catch (e) {
+    console.error("Failed to fetch highest sale:", e);
+  }
+
+  return stats;
+}
+
+async function fetchHighestSale(collectionId: string): Promise<number> {
+  // Strategy: Fetch 'SELL' activity sorted by price DESC if possible, or fetch recent sales and find max.
+  // Rarible activity API doesn't support sorting by price directly on general activity endpoint.
+  // We will attempt to fetch a batch of recent 'SELL' activities and find the max.
+  // NOTE: True lifetime highest sale requires full indexing. We will approximate with recent high value.
+  try {
+    const res = await fetch(
+      `${RARIBLE_API_BASE_URL}/activity/byCollection?collection=${collectionId}&type=SELL&size=50`,
+      { headers: _createRaribleHeaders() }
+    );
+    if (!res.ok) return 0;
+    const data = await res.json();
+    let maxPrice = 0;
+    for (const act of (data.activities || [])) {
+      const price = Number(act.price);
+      if (!isNaN(price) && price > maxPrice) {
+        maxPrice = price;
+      }
+    }
+    return maxPrice;
+  } catch {
+    return 0;
+  }
+}
+
 
 // Fetch all items from the Alien888 collection
 export async function fetchAlien888Items(
@@ -157,7 +225,7 @@ async function fetchItemsByOwner(
     try {
       const errorData = await response.json();
       errorBody = `Rarible API error: ${errorData.message || JSON.stringify(errorData)}`;
-    } catch {}
+    } catch { }
     throw new Error(errorBody);
   }
 
@@ -240,14 +308,84 @@ export async function fetchItemById(itemId: string): Promise<RaribleItem> {
     let errorBody = `Rarible API error: ${response.status} ${response.statusText}`;
     try {
       const errorData = await response.json();
-      errorBody = `Rarible API error: ${
-        errorData.message || JSON.stringify(errorData)
-      }`;
+      errorBody = `Rarible API error: ${errorData.message || JSON.stringify(errorData)
+        }`;
     } catch (e) {
       // Ignore if parsing JSON fails
     }
     throw new Error(errorBody);
   }
 
+
   return await response.json();
+}
+
+export interface TokenPriceHistory {
+  lastSalePrice?: number;
+  lastSaleDate?: string; // ISO date string
+  mintDate?: string;
+}
+
+export async function fetchTokenPriceHistory(contract: string, tokenId: string): Promise<TokenPriceHistory> {
+  const history: TokenPriceHistory = {};
+  const itemId = `ETHEREUM:${contract}:${tokenId}`;
+
+  try {
+    // 1. Fetch Mint Activity
+    const mintRes = await fetch(
+      `${RARIBLE_API_BASE_URL}/activity/byItem?itemId=${itemId}&type=MINT&size=1`,
+      { headers: _createRaribleHeaders() }
+    );
+    if (mintRes.ok) {
+      const mintData = await mintRes.json();
+      if (mintData.activities && mintData.activities.length > 0) {
+        history.mintDate = mintData.activities[0].date;
+      }
+    }
+
+    // 2. Fetch Last Sale Activity
+    const saleRes = await fetch(
+      `${RARIBLE_API_BASE_URL}/activity/byItem?itemId=${itemId}&type=SELL&size=1`,
+      { headers: _createRaribleHeaders() }
+    );
+    if (saleRes.ok) {
+      const saleData = await saleRes.json();
+      if (saleData.activities && saleData.activities.length > 0) {
+        history.lastSalePrice = Number(saleData.activities[0].price);
+        history.lastSaleDate = saleData.activities[0].date;
+      }
+    }
+  } catch (e) {
+    console.error("Error fetching token history:", e);
+  }
+
+  return history;
+}
+
+// Simple fallback cache for ETH price to avoid API spam
+let cachedEthPrice = 0;
+let lastEthFetch = 0;
+
+export async function fetchEthPrice(): Promise<number> {
+  const now = Date.now();
+  // Cache for 5 minutes
+  if (cachedEthPrice > 0 && (now - lastEthFetch < 300000)) {
+    return cachedEthPrice;
+  }
+
+  try {
+    const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
+    if (res.ok) {
+      const data = await res.json();
+      const price = data.ethereum?.usd;
+      if (price) {
+        cachedEthPrice = price;
+        lastEthFetch = now;
+        return price;
+      }
+    }
+  } catch (e) {
+    console.error("Error fetching ETH price:", e);
+  }
+  return cachedEthPrice || 0; // Return 0 if failed
 }
