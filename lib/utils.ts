@@ -26,6 +26,7 @@ export interface RaribleItem {
     description?: string;
     image?: { url: string };
     content?: Array<{ url: string; representation?: string }>;
+    attributes?: Array<{ key: string; value: string }>;
   };
   deleted: boolean;
   auctions: Array<any>;

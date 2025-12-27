@@ -56,6 +56,7 @@ export interface FetchOwnerItemsOptions {
 
 
 export interface RaribleCollectionStats {
+  totalSupply: number;
   floorPrice?: number;
   totalVolume?: number;
   totalMinted?: number; // supply
@@ -71,7 +72,9 @@ export interface FetchCollectionOptions {
 // Helper to fetch collection summary/stats
 export async function fetchCollectionStats(collectionId: string): Promise<RaribleCollectionStats> {
   // 1. Get basic collection metadata (supply, owners)
-  let stats: RaribleCollectionStats = {};
+  let stats: RaribleCollectionStats = {
+    totalSupply: 0
+  };
   try {
     const res = await fetch(`${RARIBLE_API_BASE_URL}/collections/${collectionId}`, { headers: _createRaribleHeaders() });
     if (res.ok) {
