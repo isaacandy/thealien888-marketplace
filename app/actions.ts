@@ -22,7 +22,7 @@ export async function getCollectionStatsAction(collectionId?: string): Promise<R
         return await fetchCollectionStats(id);
     } catch (error) {
         console.error("[ServerAction] Failed to fetch collection stats:", error);
-        return {};
+        return { totalSupply: 0 };
     }
 }
 
@@ -60,7 +60,7 @@ export async function fetchMoreFromCollectionAction(size: number = 4): Promise<R
         // For simplicity and speed, we fetch recent ones for now.
         const result = await fetchAlien888Items({ size: 20 });
         const items = result.items || [];
-        
+
         // Simple shuffle to show variation if we have enough items
         const shuffled = items.sort(() => 0.5 - Math.random());
         return shuffled.slice(0, size);
