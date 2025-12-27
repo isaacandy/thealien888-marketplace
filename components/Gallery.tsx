@@ -19,7 +19,7 @@ import React, { useState, useEffect } from "react";
 
 type ViewMode = "my-collection" | "all-collection";
 type ActionType = "sell" | "bid" | "offer";
-
+type ModalTab = "general" | "traits" | "bids" | "activity";
 const GALLERY_API = "/api/rarible/alien888-owned";
 const ALL_COLLECTION_API = "/api/rarible/alien888-collection";
 
@@ -91,13 +91,16 @@ const Gallery: React.FC = () => {
 
   // Modal overlay state for NFT details
   const [showDetailModal, setShowDetailModal] = useState(false);
+  const [activeTab, setActiveTab] = useState<ModalTab>("general");
   const handleViewDetails = (item: RaribleItem) => {
     setSelectedItem(item);
     setShowDetailModal(true);
+    setActiveTab("general");
   };
   const handleCloseDetailModal = () => {
     setShowDetailModal(false);
     setSelectedItem(null);
+    setActiveTab("general");
   };
 
   const [viewMode, setViewMode] = useState<ViewMode>("all-collection");
@@ -204,92 +207,192 @@ const Gallery: React.FC = () => {
 
   return (
     <div className="mt-10">
-      {/* NFT Detail Modal Overlay */}
+      {/* NFT Detail Modal Overlay with Tabs */}
       {showDetailModal && selectedItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
-          <div className="relative bg-gray-900 rounded-2xl shadow-2xl p-8 max-w-lg w-full">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
+          <div className="relative bg-gray-900 rounded-2xl shadow-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <button
-              className="absolute top-3 right-3 text-gray-400 hover:text-white text-2xl font-bold"
+              className="absolute top-3 right-3 text-gray-400 hover:text-white text-2xl font-bold z-10"
               onClick={handleCloseDetailModal}
               aria-label="Close"
             >
               ×
             </button>
-            <div className="flex flex-col items-center">
-              {resolveItemImageUrl(selectedItem) ? (
-                <Image
-                  src={String(resolveItemImageUrl(selectedItem) || "")}
-                  alt={selectedItem.meta?.name ?? selectedItem.id}
-                  width={320}
-                  height={320}
-                  className="rounded-xl mb-4 object-cover"
-                  unoptimized
-                />
-              ) : (
-                <div className="w-80 h-80 flex items-center justify-center bg-emerald-950/40 text-xs text-emerald-200/60 mb-4 rounded-xl">
-                  No preview
+            <div className="flex flex-col">
+              {/* Image and Title */}
+              <div className="flex flex-col md:flex-row gap-6 mb-6">
+                <div className="flex-shrink-0">
+                  {resolveItemImageUrl(selectedItem) ? (
+                    <Image
+                      src={String(resolveItemImageUrl(selectedItem) || "")}
+                      alt={selectedItem.meta?.name ?? selectedItem.id}
+                      width={280}
+                      height={280}
+                      className="rounded-xl object-cover"
+                      unoptimized
+                    />
+                  ) : (
+                    <div className="w-70 h-70 flex items-center justify-center bg-emerald-950/40 text-xs text-emerald-200/60 rounded-xl">
+                      No preview
+                    </div>
+                  )}
                 </div>
-              )}
-              <h2 className="text-2xl font-bold text-emerald-100 mb-2 text-center">
-                {selectedItem.meta?.name ?? `Token #${selectedItem.tokenId}`}
-              </h2>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="font-mono text-emerald-300 text-xs">#{selectedItem.tokenId}</span>
-                {(() => {
-                  const contractAddr = selectedItem.contract?.replace(/^ethereum:/i, '').toLowerCase();
-                  if (contractAddr === "0x295a6a847e3715f224826aa88156f356ac523eef") {
-                    return (
-                      <span className="flex items-center gap-1 bg-gray-800 px-2 py-1 rounded-full text-emerald-100 text-xs font-mono">
-                        TheAlien.888
-                        <svg className="h-3 w-3 text-emerald-400 ml-1" viewBox="0 0 24 24" fill="currentColor" aria-label="Verified collection"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" /></svg>
-                      </span>
-                    );
-                  }
-                  return null;
-                })()}
+                <div className="flex-1">
+                  <h2 className="text-2xl font-bold text-emerald-100 mb-2">
+                    {selectedItem.meta?.name ?? `Token #${selectedItem.tokenId}`}
+                  </h2>
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="font-mono text-emerald-300 text-xs">#{selectedItem.tokenId}</span>
+                    {(() => {
+                      const contractAddr = selectedItem.contract?.replace(/^ethereum:/i, '').toLowerCase();
+                      if (contractAddr === "0x295a6a847e3715f224826aa88156f356ac523eef") {
+                        return (
+                          <span className="flex items-center gap-1 bg-gray-800 px-2 py-1 rounded-full text-emerald-100 text-xs font-mono">
+                            TheAlien.888
+                            <svg className="h-3 w-3 text-emerald-400 ml-1" viewBox="0 0 24 24" fill="currentColor" aria-label="Verified collection"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" /></svg>
+                          </span>
+                        );
+                      }
+                      return null;
+                    })()}
+                  </div>
+                  {/* Action Buttons */}
+                  <div className="flex flex-col gap-2">
+                    <a
+                      href={`https://rarible.com/token/${selectedItem.contract.replace(/^ETHEREUM:/i, '')}:${selectedItem.tokenId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full rounded-lg bg-fuchsia-700/80 px-4 py-2 text-center text-sm font-semibold text-white shadow-[0_0_15px_rgba(232,121,249,0.5)] hover:bg-fuchsia-600 transition"
+                    >
+                      View on Rarible (Verified)
+                    </a>
+                    <button
+                      onClick={() => {
+                        setAction('bid');
+                        setShowDetailModal(false);
+                      }}
+                      className="w-full rounded-lg bg-emerald-700/80 px-4 py-2 text-center text-sm font-semibold text-white shadow-[0_0_15px_rgba(52,211,153,0.5)] hover:bg-emerald-600 transition"
+                    >
+                      Buy / Make Offer
+                    </button>
+                    <button
+                      onClick={() => {
+                        setAction('sell');
+                        setShowDetailModal(false);
+                      }}
+                      className="w-full rounded-lg bg-gray-800 px-4 py-2 text-center text-sm font-semibold text-emerald-100 hover:bg-gray-700 transition"
+                      disabled={!isMyCollection}
+                      title={isMyCollection ? '' : 'Only your NFTs can be listed for sale'}
+                    >
+                      List for Sale
+                    </button>
+                    <a
+                      href={`/token/${selectedItem.contract.replace(/^ETHEREUM:/i, '')}/${selectedItem.tokenId}`}
+                      className="w-full rounded-lg bg-gray-900 px-4 py-2 text-center text-xs font-semibold text-emerald-200 hover:bg-gray-800 transition"
+                      onClick={handleCloseDetailModal}
+                    >
+                      Full Details Page
+                    </a>
+                  </div>
+                </div>
               </div>
-              {selectedItem.meta?.description && (
-                <p className="text-emerald-200 text-sm mb-4 text-center whitespace-pre-line">{selectedItem.meta.description}</p>
-              )}
-              <div className="flex flex-col gap-2 w-full mt-2">
-                <a
-                  href={`https://rarible.com/token/${selectedItem.contract.replace('ETHEREUM:', '')}:${selectedItem.tokenId}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full rounded-lg bg-fuchsia-700/80 px-4 py-2 text-center text-sm font-semibold text-white shadow-[0_0_15px_rgba(232,121,249,0.5)] hover:bg-fuchsia-600 transition"
-                >
-                  View on Rarible (Verified)
-                </a>
-                <button
-                  onClick={() => {
-                    setAction('bid');
-                    setShowDetailModal(false);
-                  }}
-                  className="w-full rounded-lg bg-emerald-700/80 px-4 py-2 text-center text-sm font-semibold text-white shadow-[0_0_15px_rgba(52,211,153,0.5)] hover:bg-emerald-600 transition"
-                >
-                  Buy / Make Offer
-                </button>
-                <button
-                  onClick={() => {
-                    setAction('sell');
-                    setShowDetailModal(false);
-                  }}
-                  className="w-full rounded-lg bg-gray-800 px-4 py-2 text-center text-sm font-semibold text-emerald-100 hover:bg-gray-700 transition"
-                  disabled={!isMyCollection}
-                  title={isMyCollection ? '' : 'Only your NFTs can be listed for sale'}
-                >
-                  List for Sale
-                </button>
-                <a
-                  href={`/token/${selectedItem.contract.replace('ETHEREUM:', '')}/${selectedItem.tokenId}`}
-                  className="w-full rounded-lg bg-gray-900 px-4 py-2 text-center text-xs font-semibold text-emerald-200 hover:bg-gray-800 transition"
-                  onClick={handleCloseDetailModal}
-                >
-                  Full Details Page
-                </a>
+
+              {/* Tabs */}
+              <div className="border-b border-gray-700 mb-4">
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setActiveTab("general")}
+                    className={`px-4 py-2 text-sm font-semibold transition ${
+                      activeTab === "general"
+                        ? "text-emerald-400 border-b-2 border-emerald-400"
+                        : "text-gray-400 hover:text-emerald-300"
+                    }`}
+                  >
+                    General
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("traits")}
+                    className={`px-4 py-2 text-sm font-semibold transition ${
+                      activeTab === "traits"
+                        ? "text-emerald-400 border-b-2 border-emerald-400"
+                        : "text-gray-400 hover:text-emerald-300"
+                    }`}
+                  >
+                    Traits/Properties
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("bids")}
+                    className={`px-4 py-2 text-sm font-semibold transition ${
+                      activeTab === "bids"
+                        ? "text-emerald-400 border-b-2 border-emerald-400"
+                        : "text-gray-400 hover:text-emerald-300"
+                    }`}
+                  >
+                    Bids
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("activity")}
+                    className={`px-4 py-2 text-sm font-semibold transition ${
+                      activeTab === "activity"
+                        ? "text-emerald-400 border-b-2 border-emerald-400"
+                        : "text-gray-400 hover:text-emerald-300"
+                    }`}
+                  >
+                    Activity
+                  </button>
+                </div>
               </div>
-              <div className="mt-4 w-full">
-                <RaribleActivity contract={selectedItem.contract.replace(/^ethereum:/i, "")} tokenId={selectedItem.tokenId} />
+
+              {/* Tab Content */}
+              <div className="min-h-[200px]">
+                {activeTab === "general" && (
+                  <div className="space-y-3">
+                    <div>
+                      <h3 className="text-sm font-semibold text-emerald-400 mb-2">Description</h3>
+                      <p className="text-emerald-200 text-sm whitespace-pre-line">
+                        {selectedItem.meta?.description || "No description available."}
+                      </p>
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-semibold text-emerald-400 mb-2">Details</h3>
+                      <div className="space-y-1 text-sm">
+                        <p><span className="text-gray-400">Contract:</span> <span className="font-mono text-emerald-300">{selectedItem.contract}</span></p>
+                        <p><span className="text-gray-400">Token ID:</span> <span className="font-mono text-emerald-300">{selectedItem.tokenId}</span></p>
+                        <p><span className="text-gray-400">Blockchain:</span> <span className="font-mono text-emerald-300">{selectedItem.blockchain}</span></p>
+                        <p><span className="text-gray-400">Supply:</span> <span className="font-mono text-emerald-300">{selectedItem.supply}</span></p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {activeTab === "traits" && (
+                  <div>
+                    <h3 className="text-sm font-semibold text-emerald-400 mb-3">Properties</h3>
+                    {selectedItem.meta?.content && Array.isArray(selectedItem.meta.content) ? (
+                      <div className="grid grid-cols-2 gap-3">
+                        {selectedItem.meta.content.map((attr: any, idx: number) => (
+                          <div key={idx} className="bg-gray-800/50 rounded-lg p-3">
+                            <p className="text-xs text-gray-400 uppercase">{attr.representation || 'Property'}</p>
+                            <p className="text-sm font-semibold text-emerald-100 mt-1">{attr.url || 'N/A'}</p>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-gray-400">No properties available for this NFT.</p>
+                    )}
+                  </div>
+                )}
+                {activeTab === "bids" && (
+                  <div>
+                    <h3 className="text-sm font-semibold text-emerald-400 mb-3">Current Listings & Bids</h3>
+                    <p className="text-sm text-gray-400">Listing and bid information coming soon. For now, please check Rarible for live market data.</p>
+                  </div>
+                )}
+                {activeTab === "activity" && (
+                  <div>
+                    <h3 className="text-sm font-semibold text-emerald-400 mb-3">Activity History</h3>
+                    <RaribleActivity contract={selectedItem.contract.replace(/^ETHEREUM:/i, "")} tokenId={selectedItem.tokenId} />
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -468,7 +571,7 @@ const Gallery: React.FC = () => {
                             💰 List for Sale
                           </button>
                           <a
-                            href={`/token/${item.contract.replace('ETHEREUM:', '')}/${item.tokenId}`}
+                            href={`/token/${item.contract.replace(/^ETHEREUM:/i, '')}/${item.tokenId}`}
                             className="flex-1 rounded-lg bg-emerald-900 px-3 py-2 text-center text-xs font-semibold uppercase tracking-wide text-emerald-200 transition hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-black/60 no-underline"
                             onClick={e => e.stopPropagation()}
                           >
@@ -490,14 +593,23 @@ const Gallery: React.FC = () => {
                       <RaribleActivity contract={item.contract.replace(/^ethereum:/i, "")} tokenId={item.tokenId} />
                     </>
                   ) : (
-                    <div className="mt-2 flex items-center justify-between text-[12px]">
+                    <div className="mt-2 flex gap-2">
+                      <button
+                        onClick={e => {
+                          e.stopPropagation();
+                          handleViewDetails(item);
+                        }}
+                        className="flex-1 rounded-lg bg-emerald-900 px-3 py-2 text-center text-xs font-semibold uppercase tracking-wide text-emerald-200 transition hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-black/60"
+                      >
+                        👁️ View Details
+                      </button>
                       <button
                         onClick={e => {
                           e.stopPropagation();
                           setSelectedItem(item);
                           setAction("bid");
                         }}
-                        className="rounded-full bg-amber-900/40 px-2 py-1 font-mono uppercase tracking-wide text-amber-400 transition hover:bg-amber-800/40 focus:outline-none focus:ring-2 focus:ring-black/60"
+                        className="flex-1 rounded-lg bg-amber-900/40 px-3 py-2 text-center text-xs font-semibold uppercase tracking-wide text-amber-400 transition hover:bg-amber-800/40 focus:outline-none focus:ring-2 focus:ring-black/60"
                       >
                         Buy/Offer
                       </button>
