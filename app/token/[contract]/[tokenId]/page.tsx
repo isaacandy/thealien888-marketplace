@@ -8,6 +8,12 @@ import Link from 'next/link';
 import React from 'react';
 import { OpenSeaTokenLayout } from '../../../../components/OpenSea/TokenLayout';
 
+interface TokenPageProps {
+    params: Promise<{
+        contract: string;
+        tokenId: string;
+    }>;
+}
 
 export default async function TokenPage({ params }: TokenPageProps) {
     const { contract, tokenId } = await params;

@@ -94,7 +94,6 @@ export function OpenSeaTokenLayout({ item, collectionStats, priceHistory, openSe
                                 fill
                                 className="object-cover transition duration-500 hover:scale-105"
                                 unoptimized
-                                unoptimized
                                 priority
                                 sizes="(max-width: 768px) 100vw, 50vw"
                             />
