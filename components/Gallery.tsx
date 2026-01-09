@@ -15,6 +15,14 @@ interface Bid {
   date?: string;
 }
 
+interface CollectionStats {
+  total_supply: number;
+  num_owners: number;
+  floor_price: number;
+  total_volume: number;
+  one_day_change: number;
+}
+
 import React, { useState, useEffect } from "react";
 
 type ViewMode = "my-collection" | "all-collection";
@@ -22,6 +30,7 @@ type ActionType = "sell" | "bid" | "offer";
 type ModalTab = "general" | "traits" | "bids" | "activity";
 const GALLERY_API = "/api/rarible/alien888-owned";
 const ALL_COLLECTION_API = "/api/rarible/alien888-collection";
+const COLLECTION_STATS_API = "/api/opensea/collection-stats";
 
 const TradeModal = ({
   action,
@@ -110,6 +119,8 @@ const Gallery: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState<RaribleItem | null>(null);
   const [action, setAction] = useState<ActionType | null>(null);
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [collectionStats, setCollectionStats] = useState<CollectionStats | null>(null);
 
   // Fetch user's NFTs
   useEffect(() => {
@@ -178,6 +189,30 @@ const Gallery: React.FC = () => {
     return () => {
       controller.abort();
     };
+  }, []);
+
+  // Fetch overall collection stats (e.g., from OpenSea)
+  useEffect(() => {
+    const controller = new AbortController();
+    setStatsLoading(true);
+    async function loadStats() {
+      try {
+        console.log('Gallery: fetching collection stats');
+        const res = await fetch(COLLECTION_STATS_API, { signal: controller.signal });
+        if (!res.ok) {
+          const errorData = await res.json();
+          throw new Error(errorData.error || 'Failed to fetch collection stats');
+        }
+        const data: CollectionStats = await res.json();
+        setCollectionStats(data);
+      } catch (err: unknown) {
+        console.error('Gallery: error fetching collection stats:', err);
+      } finally {
+        setStatsLoading(false);
+      }
+    }
+    loadStats();
+    return () => controller.abort();
   }, []);
 
   const handleAction = async (price: number) => {
@@ -302,41 +337,37 @@ const Gallery: React.FC = () => {
                 <div className="flex gap-2">
                   <button
                     onClick={() => setActiveTab("general")}
-                    className={`px-4 py-2 text-sm font-semibold transition ${
-                      activeTab === "general"
-                        ? "text-emerald-400 border-b-2 border-emerald-400"
-                        : "text-gray-400 hover:text-emerald-300"
-                    }`}
+                    className={`px-4 py-2 text-sm font-semibold transition ${activeTab === "general"
+                      ? "text-emerald-400 border-b-2 border-emerald-400"
+                      : "text-gray-400 hover:text-emerald-300"
+                      }`}
                   >
                     General
                   </button>
                   <button
                     onClick={() => setActiveTab("traits")}
-                    className={`px-4 py-2 text-sm font-semibold transition ${
-                      activeTab === "traits"
-                        ? "text-emerald-400 border-b-2 border-emerald-400"
-                        : "text-gray-400 hover:text-emerald-300"
-                    }`}
+                    className={`px-4 py-2 text-sm font-semibold transition ${activeTab === "traits"
+                      ? "text-emerald-400 border-b-2 border-emerald-400"
+                      : "text-gray-400 hover:text-emerald-300"
+                      }`}
                   >
                     Traits/Properties
                   </button>
                   <button
                     onClick={() => setActiveTab("bids")}
-                    className={`px-4 py-2 text-sm font-semibold transition ${
-                      activeTab === "bids"
-                        ? "text-emerald-400 border-b-2 border-emerald-400"
-                        : "text-gray-400 hover:text-emerald-300"
-                    }`}
+                    className={`px-4 py-2 text-sm font-semibold transition ${activeTab === "bids"
+                      ? "text-emerald-400 border-b-2 border-emerald-400"
+                      : "text-gray-400 hover:text-emerald-300"
+                      }`}
                   >
                     Bids
                   </button>
                   <button
                     onClick={() => setActiveTab("activity")}
-                    className={`px-4 py-2 text-sm font-semibold transition ${
-                      activeTab === "activity"
-                        ? "text-emerald-400 border-b-2 border-emerald-400"
-                        : "text-gray-400 hover:text-emerald-300"
-                    }`}
+                    className={`px-4 py-2 text-sm font-semibold transition ${activeTab === "activity"
+                      ? "text-emerald-400 border-b-2 border-emerald-400"
+                      : "text-gray-400 hover:text-emerald-300"
+                      }`}
                   >
                     Activity
                   </button>
@@ -414,9 +445,48 @@ const Gallery: React.FC = () => {
         <p className="mt-3 text-gray-300 text-lg max-w-2xl mx-auto">
           Welcome to the official TheAlien.888 NFT marketplace on Ethereum. Here you can browse, buy, sell, and manage your unique Alien.888 NFTs. Connect your wallet to see your collection, list NFTs for sale, or make offers. All trades are powered by the Rarible Protocol for security and transparency.
         </p>
-        <div className="mt-4 text-gray-400 text-sm flex items-center justify-center gap-2">
-          <span className="font-mono">Collection ID:</span> <span className="font-mono text-gray-300">ETHEREUM:0x295a6a847e3715f224826aa88156f356ac523eef</span>
+        <div className="mt-4 text-gray-400 text-sm flex flex-wrap items-center justify-center gap-2 px-4">
+          <span className="font-mono whitespace-nowrap">Collection ID:</span>
+          <a
+            href="https://etherscan.io/address/0x295a6a847e3715f224826aa88156f356ac523eef"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-mono text-gray-300 hover:text-emerald-400 break-all max-w-full text-xs sm:text-sm transition-colors duration-200 cursor-pointer underline decoration-gray-500 hover:decoration-emerald-400"
+            title="View contract on Etherscan"
+          >
+            ETHEREUM:0x295a6a847e3715f224826aa88156f356ac523eef
+          </a>
         </div>
+        {/* Collection Stats Display with Loading Skeleton */}
+        {statsLoading ? (
+          <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto text-center animate-pulse">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="bg-gray-900/50 p-3 rounded-lg">
+                <div className="h-7 bg-gray-700 rounded w-3/4 mx-auto mb-2"></div>
+                <div className="h-3 bg-gray-700 rounded w-1/2 mx-auto"></div>
+              </div>
+            ))}
+          </div>
+        ) : collectionStats && (
+          <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto text-center">
+            <div className="bg-gray-900/50 p-3 rounded-lg">
+              <div className="text-2xl font-bold text-emerald-300">{collectionStats.total_supply}</div>
+              <div className="text-xs text-gray-400 uppercase">Total Minted</div>
+            </div>
+            <div className="bg-gray-900/50 p-3 rounded-lg">
+              <div className="text-2xl font-bold text-emerald-300">{collectionStats.num_owners}</div>
+              <div className="text-xs text-gray-400 uppercase">Owners</div>
+            </div>
+            <div className="bg-gray-900/50 p-3 rounded-lg">
+              <div className="text-2xl font-bold text-emerald-300">{collectionStats.floor_price || 'N/A'} <span className="text-base">ETH</span></div>
+              <div className="text-xs text-gray-400 uppercase">Floor Price</div>
+            </div>
+            <div className="bg-gray-900/50 p-3 rounded-lg">
+              <div className="text-2xl font-bold text-emerald-300">{collectionStats.total_volume.toFixed(2)} <span className="text-base">ETH</span></div>
+              <div className="text-xs text-gray-400 uppercase">Total Volume</div>
+            </div>
+          </div>
+        )}
       </header>
       <div className="flex items-center gap-2 mb-2">
         <span className="text-lg font-bold text-white bg-black/60 px-2 py-1 rounded-t">NFT Command Center</span>
