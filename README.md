@@ -1,5 +1,5 @@
 
-
+[![Netlify Status](https://api.netlify.com/api/v1/badges/d2cedaab-0829-4e06-8e20-d6d3108689ef/deploy-status)](https://app.netlify.com/projects/thealien888-marketplace/deploys)
 # TheAlien888 Marketplace
 
 A standalone Next.js 16 + TypeScript NFT marketplace interface for the **TheAlien.888** collection on Ethereum, designed as a subproject within the main TheAlien888 Interface repository.
