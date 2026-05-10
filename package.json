@@ -49,6 +49,9 @@
     "wagmi": "^2.19.5"
   },
   "overrides": {
+    "@reown/appkit-adapter-wagmi": {
+      "@wagmi/connectors": "6.2.0"
+    },
     "@aptos-labs/ts-sdk": "5.2.0",
     "@wagmi/core": "2.22.1",
     "inflight": "npm:@alexbinary/inflight@^2.1.0",
