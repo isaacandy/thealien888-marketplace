@@ -13,12 +13,12 @@
     "@alloc/quick-lru": "5.2.0",
     "@radix-ui/react-label": "^2.1.8",
     "@radix-ui/react-slot": "^1.2.4",
-    "@rainbow-me/rainbowkit": "^2.2.10",
-    "@rarible/api-client": "1.115.0",
+    "@rainbow-me/rainbowkit": "^2.2.11",
+    "@rarible/api-client": "^1.136.0",
     "@rarible/ethereum-provider": "^0.13.119",
     "@rarible/sdk": "^0.8.19",
     "@rarible/sdk-wallet": "^0.13.68",
-    "@rarible/tezos-sdk": "^0.1.46",
+    "@rarible/tezos-sdk": "0.1.7",
     "@rarible/web3-ethereum": "^0.12.109",
     "@react-three/drei": "^9.122.0",
     "@react-three/fiber": "^8.18.0",
@@ -58,7 +58,8 @@
     "inflight": "npm:@alexbinary/inflight@^2.1.0",
     "glob": "^10.3.10",
     "uuid": "^10.0.0",
-    "three-mesh-bvh": "^0.8.0"
+    "three-mesh-bvh": "^0.8.0",
+    "@rarible/tezos-sdk": "0.1.7"
   },
   "engines": {
     "node": ">=20.9.0"
