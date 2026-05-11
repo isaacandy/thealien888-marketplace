@@ -98,16 +98,17 @@ NPM_FLAGS=--legacy-peer-deps
 ### Core Framework
 - `next@16.1.0` - Next.js framework
 - `react@18.3.1` - React library
-- `react-dom@18.3.1` - React DOM
 - `typescript@5.9.3` - TypeScript compiler
+- `react-dom@18.3.1` - React DOM (No change)
 
-### Web3 Libraries
+### Web3 Libraries (Updated)
 - `wagmi@2.19.5` - Ethereum wallet hooks
-- `@rainbow-me/rainbowkit@2.2.10` - Wallet UI
-- `viem@2.43.2` - Ethereum client
-- `@reown/appkit@1.8.15` - Reown AppKit
-- `@rarible/sdk@0.8.19` - Rarible Protocol SDK
-- `@rarible/api-client@1.115.0` - Rarible API Client
+- `@rainbow-me/rainbowkit@2.2.11` - Wallet UI
+- `viem@2.48.11` - Ethereum client (No change)
+- `@reown/appkit@1.8.19` - Reown AppKit (No change)
+- `@rarible/sdk@0.8.52` - Rarible Protocol SDK (No change)
+- `@rarible/api-client@1.136.0` - Rarible API Client
+
 
 ### UI & Styling
 - `tailwindcss@4` - Utility CSS framework
@@ -309,4 +310,3 @@ The TheAlien.888 NFT Marketplace is **production-ready** and fully prepared for 
 **Generated:** December 26, 2025  
 **Project:** TheAlien.888 NFT Marketplace  
 **Status:** ✅ READY FOR PRODUCTION DEPLOYMENT
-

@@ -359,8 +359,8 @@ Once analysis is complete, here's the build order:
 
 - **Framework:** Next.js 16.0.10 + TypeScript 5.9.3
 - **UI:** Tailwind CSS 3.x, Framer Motion, Lucide React
-- **Web3:** RainbowKit, Wagmi, Viem, Rarible SDK
-- **3D:** Three.js, React Three Fiber, Drei
+- **Web3:** RainbowKit@2.2.11, Wagmi@2.19.5, Viem@2.48.11, Rarible SDK
+- **3D:** Three.js@0.182, React Three Fiber, Drei
 - **API:** Rarible Protocol v0.1
 - **Wallet:** RainbowKit, Wagmi
 - **Icons:** Lucide React
