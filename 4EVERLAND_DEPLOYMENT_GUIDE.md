@@ -1,4 +1,4 @@
-# 🚀 Netlify Deployment Guide
+# 🚀 4EVERLAND Deployment Guide
 
 **Status:** ✅ **BUILD READY FOR DEPLOYMENT**  
 **Date:** December 26, 2025  
@@ -6,43 +6,44 @@
 
 ---
 
-## 📝 **Documentation Note**
-This guide is a living document and should be updated by AI assistants and human contributors alike whenever significant changes to the project's deployment process, environment variables, or troubleshooting steps occur. This ensures a clear and consistent record of the project's deployment strategy.
-
+## 📝 **Documentation Note: 4EVERLAND Deployment**
+This guide is a living document and should be updated by AI assistants and human contributors alike whenever significant changes to the project's deployment process, environment variables, or troubleshooting steps occur. This ensures a clear and consistent record of the project's deployment strategy, specifically for 4EVERLAND.
 
 ---
 
-## 📋 Pre-Deployment Checklist
+## 📋 Pre-Deployment Checklist (for 4EVERLAND)
 
 - ✅ **Build Status:** Successful (`npm run build` completed)
 - ✅ **Build Output:** `.next` folder generated with server, static, and types directories
 - ✅ **Environment Variables:** Configured in `.env.local`
   - `RARIBLE_API_KEY` - Set and verified
   - `NEXT_PUBLIC_RARIBLE_API_KEY` - Set and verified
-- ✅ **Netlify Configuration:** `netlify.toml` configured correctly
-- ✅ **Node Version:** 22 (as specified in netlify.toml)
+- ✅ **4EVERLAND Configuration:** Project settings configured correctly (or `4everland.json` if used)
+- ✅ **Node Version:** 22 (as specified in project config or 4everland settings)
 - ✅ **Package Manager:** npm with `--legacy-peer-deps` flag
 
 ---
 
 ## 🔧 Configuration Summary
 
-### netlify.toml Settings:
-```toml
-[build]
-  command = "npm run build"
-  publish = ".next"
-  functions = "netlify/functions"
-
-[build.environment]
-  NPM_FLAGS = "--legacy-peer-deps"
-  NODE_VERSION = "22"
-
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
+### 4EVERLAND Build Settings (typically configured via UI or `4everland.json` if applicable):
+```
+# Example: 4everland.json (if used, otherwise configured via UI)
+# {
+#   "build": {
+#     "command": "npm run build",
+#     "outputDirectory": ".next"
+#   },
+#   "environment": {
+#     "NPM_FLAGS": "--legacy-peer-deps",
+#     "NODE_VERSION": "22"
+#   }
+# }
 ```
 
-### Environment Variables Required on Netlify:
+**Note:** 4EVERLAND typically auto-detects Next.js projects. Ensure the build command and publish directory are correctly set in the 4EVERLAND dashboard if not using a config file.
+
+### Environment Variables Required on 4EVERLAND:
 1. **RARIBLE_API_KEY** - For Rarible Protocol API access
    - Value: `[REDACTED]`
    - Type: Server-side only
@@ -58,45 +59,42 @@ This guide is a living document and should be updated by AI assistants and human
 
 ---
 
-## 📦 Deployment Steps
+## 📦 4EVERLAND Deployment Steps
 
-### **Step 1: Connect Repository to Netlify**
+### **Step 1: Connect Repository to 4EVERLAND**
 
-1. Go to [Netlify Dashboard](https://app.netlify.com/)
-2. Click **"New site from Git"**
+1. Go to 4EVERLAND Dashboard
+2. Click **"New Project"** or similar option to deploy a new site.
 3. Choose your Git provider (GitHub, GitLab, Bitbucket)
 4. Select the repository: `thealien888-marketplace` (or parent repo)
 5. Configure build settings:
    - **Build command:** `npm run build`
    - **Publish directory:** `.next`
-   - **Functions directory:** `netlify/functions`
+   - **Framework:** Next.js (should be auto-detected)
 
-### **Step 2: Set Environment Variables**
+### **Step 2: Set Environment Variables on 4EVERLAND**
 
-In Netlify Dashboard:
+In 4EVERLAND Dashboard:
 1. Go to **Site Settings** → **Environment Variables**
 2. Add the following variables:
    ```
    RARIBLE_API_KEY = [REDACTED]
    NEXT_PUBLIC_RARIBLE_API_KEY = [REDACTED]
    NPM_FLAGS = --legacy-peer-deps
+   # Ensure NODE_VERSION is set in 4EVERLAND project settings, not directly here
+   # as 4EVERLAND might have a dedicated field for it.
    NODE_VERSION = 22
    ```
 
 ### **Step 3: Deploy**
+   - 4EVERLAND typically triggers a deployment automatically after configuration.
+   - You can also manually trigger a deploy from the 4EVERLAND dashboard.
 
-Option A: **Automatic Deployment (Recommended)**
-- Push changes to your repository's main/master branch
-- Netlify automatically builds and deploys
-
-Option B: **Manual Deployment**
-- In Netlify Dashboard → **Deploys** → **Trigger Deploy** → **Deploy Site**
-
-### **Step 4: Verify Deployment**
+### **Step 4: Verify 4EVERLAND Deployment**
 
 1. Wait for build to complete (usually 2-5 minutes)
-2. Check the **Deploys** tab for status
-3. Visit your site URL (e.g., `https://thealien888-marketplace.netlify.app`)
+2. Check the **Deployment Logs** or **Build History** in your 4EVERLAND project dashboard for status.
+3. Visit your site URL (e.g., `https://your-project-name.4everland.app`)
 4. Test key features:
    - ✅ Gallery loads
    - ✅ NFT data displays from Rarible API
@@ -105,28 +103,34 @@ Option B: **Manual Deployment**
 
 ---
 
-## 🐛 Troubleshooting
+## 🐛 Troubleshooting (for 4EVERLAND)
+
+**General Advice:** 4EVERLAND's build logs are your primary source of information for debugging.
+
+### **Issue: Repository Cloning Failure**
+- **Cause:** Often due to large repo size, network issues, or GitHub access permissions.
+- **Solution:** Ensure 4EVERLAND has correct GitHub permissions. Check GitHub status. If repo is very large, consider Git LFS or optimizing repo size.
 
 ### **Issue: Build fails with "next not found"**
 - **Solution:** Netlify should auto-install with `npm install --legacy-peer-deps`
-- Ensure `NODE_VERSION=22` is set in environment variables
+- Ensure `NODE_VERSION=22` is set in 4EVERLAND project settings or environment variables.
 
 ### **Issue: Rarible API returns 403 (Forbidden)**
 - **Cause:** Missing or invalid API key
-- **Solution:** Verify `RARIBLE_API_KEY` in Netlify environment variables
+- **Solution:** Verify `RARIBLE_API_KEY` in 4EVERLAND environment variables
 - **Reference:** See `.env.local` for current key
 
 ### **Issue: Gallery component doesn't load**
 - **Cause:** Missing `NEXT_PUBLIC_RARIBLE_API_KEY`
-- **Solution:** Ensure both API keys are set in environment variables
+- **Solution:** Ensure both API keys are set in 4EVERLAND environment variables
 
-### **Issue: Build succeeds but site shows "404"**
-- **Cause:** Wrong publish directory
-- **Solution:** Verify `publish = ".next"` in netlify.toml
+### **Issue: Build succeeds but site shows "404" or incorrect content**
+- **Cause:** Wrong publish directory or incorrect build output.
+- **Solution:** Verify the "Output Directory" in 4EVERLAND settings is `.next`.
 
 ### **Issue: "Cannot find module" errors**
-- **Cause:** Peer dependencies not resolved
-- **Solution:** Ensure `NPM_FLAGS = "--legacy-peer-deps"` is set
+- **Cause:** Peer dependencies not resolved or Node.js version mismatch.
+- **Solution:** Ensure `NPM_FLAGS = "--legacy-peer-deps"` is set in 4EVERLAND environment variables. Verify Node.js version is compatible (e.g., 22) in 4EVERLAND project settings.
 
 ---
 
@@ -184,7 +188,7 @@ Option B: **Manual Deployment**
 
 1. **Monitor Netlify Analytics**
    - Track build times and deploy frequency
-   - Monitor site performance
+   - Monitor site performance (using 4EVERLAND's analytics if available)
 
 2. **Set up Domain**
    - Connect custom domain (e.g., `marketplace.thealien888.iznd.xyz`)
@@ -205,7 +209,7 @@ Option B: **Manual Deployment**
 ## 📞 Support & Resources
 
 - **Netlify Docs:** https://docs.netlify.com/
-- **Next.js Deployment:** https://nextjs.org/docs/deployment
+- **4EVERLAND Docs:** https://docs.4everland.org/
 - **Rarible API Docs:** https://api.rarible.com/docs
 - **Wagmi Docs:** https://wagmi.sh/
 - **RainbowKit Docs:** https://www.rainbowkit.com/docs

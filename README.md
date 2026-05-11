@@ -1,6 +1,6 @@
+<!-- No 4everland badge available via API, so removing the Netlify badge. -->
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/d2cedaab-0829-4e06-8e20-d6d3108689ef/deploy-status)](https://app.netlify.com/projects/thealien888-marketplace/deploys)
-# TheAlien888 Marketplace
+# TheAlien888 Marketplace (Deployed on 4EVERLAND)
 
 A standalone Next.js 16 + TypeScript NFT marketplace interface for the **TheAlien.888** collection on Ethereum, designed as a subproject within the main TheAlien888 Interface repository.
 
@@ -85,9 +85,9 @@ A standalone Next.js 16 + TypeScript NFT marketplace interface for the **TheAlie
 ---
 
 ## 📚 More Info
-
 - For parent repo structure, AI automation, and interface details, see [../README.md](../README.md).
 - For troubleshooting Rarible API, see [RARIBLE_API_DEBUG.md](RARIBLE_API_DEBUG.md) in this folder.
+- For 4EVERLAND deployment details, see [4EVERLAND_DEPLOYMENT_GUIDE.md](4EVERLAND_DEPLOYMENT_GUIDE.md).
 
 ---
 

@@ -1,6 +1,6 @@
 {
   "name": "thealien888-marketplace",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -65,7 +65,6 @@
     "node": ">=20.9.0"
   },
   "devDependencies": {
-    "@netlify/next": "^1.4.9",
     "autoprefixer": "^10.5.0",
     "eslint-config-next": "^16.2.6",
     "postcss": "^8.5.14",

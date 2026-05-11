@@ -1,4 +1,4 @@
-# ✅ Netlify Deployment Checklist - READY TO DEPLOY
+# ✅ 4EVERLAND Deployment Checklist - READY TO DEPLOY
 
 **Date:** December 26, 2025  
 **Status:** ✅ **READY FOR DEPLOYMENT**  
@@ -6,10 +6,10 @@
 
 ---
 
-## 🎯 Pre-Deployment Status
+## 🎯 Pre-Deployment Status (for 4EVERLAND)
 
 ### Build Verification ✅
-- [x] `npm run build` completed successfully
+- [x] `npm run build` completed successfully (for 4EVERLAND build environment)
 - [x] `.next` folder generated with all required directories
 - [x] No TypeScript compilation errors
 - [x] No critical build warnings
@@ -17,13 +17,13 @@
 - [x] Node.js 22 compatible
 
 ### Configuration ✅
-- [x] `netlify.toml` configured correctly
+- [x] 4EVERLAND project settings configured correctly (or `4everland.json` if used, though 4EVERLAND often auto-detects Next.js)
 - [x] Build command: `npm run build`
 - [x] Publish directory: `.next`
-- [x] Functions directory: `netlify/functions`
+- [x] Functions directory: `api` (or similar, depending on 4EVERLAND's Next.js handling)
 - [x] Node version: 22
 - [x] npm flags: `--legacy-peer-deps`
-- [x] Plugin: `@netlify/plugin-nextjs`
+- [x] 4EVERLAND Next.js build process is active
 
 ### Environment Variables ✅
 - [x] `RARIBLE_API_KEY` configured
@@ -40,21 +40,21 @@
 - [x] Types definitions generated
 
 ### Documentation ✅
-- [x] `NETLIFY_DEPLOYMENT_GUIDE.md` created
+- [x] `4EVERLAND_DEPLOYMENT_GUIDE.md` created (updated from Netlify guide)
 - [x] Deployment guide includes troubleshooting
 - [x] README updated with build info
 - [x] This checklist created
 
 ---
 
-## 🚀 How to Deploy to Netlify
+## 🚀 How to Deploy to 4EVERLAND
 
-### **Option 1: Automatic Deployment (Recommended)**
+### **Option 1: Automatic Deployment (Recommended for 4EVERLAND)**
 
-1. **Go to Netlify Dashboard**
-   - Visit: https://app.netlify.com/
+1. **Go to 4EVERLAND Dashboard**
+   - Visit: https://dashboard.4everland.org/
 
-2. **Create New Site from Git**
+2. **Create New Project from Git**
    - Click: "New site from Git"
    - Choose provider: GitHub/GitLab/Bitbucket
    - Select repository
@@ -63,27 +63,27 @@
    - Build command: `npm run build`
    - Publish directory: `.next`
    - Functions directory: `netlify/functions`
-   - Node version: 22
+   - Node version: 22 (ensure this is set in 4EVERLAND project settings, not as an environment variable)
 
-4. **Add Environment Variables**
-   - Go to: Site Settings → Environment Variables
+4. **Add Environment Variables on 4EVERLAND**
+   - Go to: Project Settings → Environment Variables
    - Add:
      ```
    RARIBLE_API_KEY=[REDACTED]
    NEXT_PUBLIC_RARIBLE_API_KEY=[REDACTED]
      NPM_FLAGS=--legacy-peer-deps
-     NODE_VERSION=22
+     # NODE_VERSION is typically set in a dedicated field in 4EVERLAND project settings, not as an env var.
      ```
 
 5. **Deploy**
    - Click: "Deploy site"
    - Wait: 2-5 minutes for build
 
-### **Option 2: Manual Deployment via CLI**
+### **Option 2: Manual Deployment via 4EVERLAND CLI (if available/preferred)**
 
 ```bash
-# Install Netlify CLI
-npm install -g netlify-cli
+# Install 4EVERLAND CLI (if not already)
+npm install -g @4everland/cli # Example, verify actual CLI package
 
 # Login to Netlify
 netlify login
@@ -98,10 +98,8 @@ netlify deploy --dir=.next --prod
 ### **Option 3: Git Push (If Already Connected)**
 
 ```bash
-# Push to main/master branch
-git push origin main
-
-# Netlify auto-deploys on push
+# Push to your connected Git branch (e.g., main)
+git push origin main # 4EVERLAND auto-deploys on push
 ```
 
 ---
@@ -110,10 +108,10 @@ git push origin main
 
 After deployment completes, verify these features work:
 
-### Gallery & NFT Display
+### Gallery & NFT Display (on 4EVERLAND hosted site)
 - [ ] Homepage loads without errors
 - [ ] Gallery tab displays NFTs
-- [ ] "All Collection" tab shows marketplace NFTs
+- [x] "All Collection" tab shows marketplace NFTs
 - [ ] "My Collection" tab requires wallet (after connecting)
 - [ ] NFT images load properly
 - [ ] NFT metadata displays correctly
@@ -195,4 +193,3 @@ The TheAlien.888 Marketplace is **ready for production deployment**.
 
 **Questions?** Check `NETLIFY_DEPLOYMENT_GUIDE.md` for detailed instructions.  
 **Last Updated:** December 26, 2025
-

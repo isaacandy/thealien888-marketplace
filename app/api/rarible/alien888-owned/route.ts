@@ -17,9 +17,6 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     );
   }
 
-
-
-
   // Validate size parameter: must be a positive integer
   let size: number | undefined = undefined;
   if (sizeParam) {
@@ -77,5 +74,3 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     );
   }
 }
-
-

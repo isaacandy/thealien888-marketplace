@@ -150,7 +150,7 @@ Option B: **Manual Deployment**
 
 ## 🔐 Security Notes
 
-1. **Never commit .env.local to Git**
+1. **Never commit `.env.local` to Git**
    - `.gitignore` should include `.env.local`
    - Use Netlify environment variables instead
 
@@ -160,7 +160,7 @@ Option B: **Manual Deployment**
    - Both should be treated as "exposed" to prevent misuse
 
 3. **Rate Limiting**
-   - Rarible API has rate limits (100+ requests/minute)
+   - Rarible API has rate limits
    - Marketplace implements validation in `app/api/rarible/alien888-owned/route.ts`
    - Monitor API usage in Rarible dashboard
 
@@ -181,18 +181,18 @@ Option B: **Manual Deployment**
 ---
 
 ## 🚀 Next Steps After Deployment
-
-1. **Monitor Netlify Analytics**
+### Immediate
+1. **Monitor 4EVERLAND Analytics**
    - Track build times and deploy frequency
    - Monitor site performance
 
 2. **Set up Domain**
    - Connect custom domain (e.g., `marketplace.thealien888.iznd.xyz`)
-   - Enable HTTPS (automatic with Netlify)
+   - Enable HTTPS (automatic with 4EVERLAND)
 
 3. **Update Parent Site Links**
-   - Update navigation in parent `TheAlien888-Site.-Front-end-module`
-   - Link from `gallery.html` → new Netlify marketplace URL
+   - Update navigation in parent `TheAlien888-Site.-Front-end-module` (if applicable)
+   - Link from `gallery.html` → new 4EVERLAND marketplace URL
 
 4. **Implement Advanced Features**
    - Staking with real $TA8 rewards
@@ -204,11 +204,7 @@ Option B: **Manual Deployment**
 
 ## 📞 Support & Resources
 
-- **Netlify Docs:** https://docs.netlify.com/
-- **Next.js Deployment:** https://nextjs.org/docs/deployment
-- **Rarible API Docs:** https://api.rarible.com/docs
-- **Wagmi Docs:** https://wagmi.sh/
-- **RainbowKit Docs:** https://www.rainbowkit.com/docs
+- **4EVERLAND Docs:** https://docs.4everland.org/
 
 ---
 

@@ -13,6 +13,12 @@ This document contains the complete context of our conversation so you (the new 
 
 ---
 
+## 📝 **AI Assistant Directive: Documentation Maintenance**
+
+Whenever any change is made (code, configuration, dependencies, etc.), ensure all relevant documentation files (e.g., `package.json`, `package-lock.json`, `DEPLOYMENT_SUMMARY.md`, `COPILOT_HANDOFF.md`, `4EVERLAND_DEPLOYMENT_GUIDE.md`, `README.md`, etc.) are updated to reflect these changes. Include a brief explanation of *what* changed, *why* it changed, and *what its impact* is, to maintain a clear and revertible history of the project's evolution. **Special attention should be paid to deployment-related documentation due to the transition from Netlify to 4EVERLAND.**
+
+---
+
 ## 🎯 **Current Objective**
 
 **IMMEDIATE TASK:** Analyze the parent folder structure (`TheAlien888-Site.-Front-end-module`) to understand the original website's architecture, theme, and components. Then create an integration plan for the marketplace subfolder that maintains design consistency.
